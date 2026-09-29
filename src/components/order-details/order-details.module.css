@@ -1,0 +1,21 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+}
+
+.icon_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 76, 255, 0.4), transparent 70%);
+}
+
+.icon_wrapper > svg {
+  width: 48px;
+  height: 48px;
+}
