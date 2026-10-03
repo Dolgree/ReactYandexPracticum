@@ -1,6 +1,7 @@
 .burger_constructor {
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
   max-height: calc(100vh - 200px);
   overflow: hidden;
 }
@@ -31,6 +32,7 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .filling_item > svg {
@@ -39,11 +41,36 @@
 }
 
 .filling_item > :last-child {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-width: 0;
   width: auto;
   max-width: 100%;
   margin: 0;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 2px dashed #4c4cff;
+  border-radius: 40px;
+  min-height: 80px;
+  text-align: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.placeholder_top {
+  border-radius: 88px 88px 40px 40px;
+}
+
+.placeholder_bottom {
+  border-radius: 40px 40px 88px 88px;
+}
+
+.placeholder_active {
+  border-color: #ffffff;
+  background: rgba(76, 76, 255, 0.15);
 }
 
 .footer {
