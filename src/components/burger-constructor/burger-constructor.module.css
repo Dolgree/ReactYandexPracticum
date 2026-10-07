@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-self: flex-start;
-  max-height: calc(100vh - 200px);
+  max-height: calc(70vh);
   overflow: hidden;
 }
 
@@ -14,6 +14,7 @@
   flex: 1;
   min-height: 0;
   padding: 16px 0;
+  scrollbar-gutter: stable;
 }
 
 .fillings {

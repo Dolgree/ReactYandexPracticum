@@ -1,7 +1,7 @@
 .burger_ingredients {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh / 2);
+  max-height: calc(70vh);
   overflow: hidden;
 }
 
