@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
-import { IngredientsList } from '@/services/ingridienServices';
+import { IngredientsList } from '@components/ingredient-list/ingredient-list';
 import { Modal } from '@components/modal/modal';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
+import { useModal } from '@hooks/use-modal';
+import {
+  setSelectedIngredient,
+  clearSelectedIngredient,
+} from '@services/slices/ingredient-details-slice';
 
 import type { TIngredient } from '@utils/types';
+import type { TRootState } from '@services/store';
 
 import styles from './burger-ingredients.module.css';
 
@@ -18,9 +25,13 @@ type TTabValue = 'bun' | 'main' | 'sauce';
 export const BurgerIngredients = ({
   ingredients,
 }: TBurgerIngredientsProps): React.JSX.Element => {
+  const dispatch = useDispatch();
+  const selectedIngredient = useSelector(
+    (state: TRootState) => state.ingredientDetails.selectedIngredient
+  );
+
   const [activeTab, setActiveTab] = useState<TTabValue>('bun');
-  const [selectedIngredient, setSelectedIngredient] =
-    useState<TIngredient | null>(null);
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bunRef = useRef<HTMLDivElement>(null);
@@ -28,27 +39,44 @@ export const BurgerIngredients = ({
   const sauceRef = useRef<HTMLDivElement>(null);
   const isProgrammaticScroll = useRef(false);
 
-  const buns = useMemo(() => ingredients.filter((i) => i.type === 'bun'),
-  [ingredients]
-);
-const mains = useMemo(() => ingredients.filter((i) => i.type === 'main'),
-  [ingredients]
-);
-const sauces = useMemo(() => ingredients.filter((i) => i.type === 'sauce'),
-  [ingredients]
-);
+  const buns = useMemo(
+    () => ingredients.filter((i) => i.type === 'bun'),
+    [ingredients]
+  );
+  const mains = useMemo(
+    () => ingredients.filter((i) => i.type === 'main'),
+    [ingredients]
+  );
+  const sauces = useMemo(
+    () => ingredients.filter((i) => i.type === 'sauce'),
+    [ingredients]
+  );
+
+  const handleIngredientClick = useCallback(
+    (ingredient: TIngredient) => {
+      dispatch(setSelectedIngredient(ingredient));
+      openModal();
+    },
+    [dispatch, openModal]
+  );
+
+  const handleCloseModal = useCallback(() => {
+    closeModal();
+    dispatch(clearSelectedIngredient());
+  }, [dispatch, closeModal]);
 
   const handleTabClick = useCallback(
-  (value: TTabValue, ref: React.RefObject<HTMLDivElement | null>) => {
-    isProgrammaticScroll.current = true;
-    setActiveTab(value);
-    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.setTimeout(() => {
-      isProgrammaticScroll.current = false;
-    }, 500);
-  },
-  []
-);
+    (value: TTabValue, ref: React.RefObject<HTMLDivElement | null>) => {
+      isProgrammaticScroll.current = true;
+      setActiveTab(value);
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      window.setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 500);
+    },
+    []
+  );
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -121,27 +149,24 @@ const sauces = useMemo(() => ingredients.filter((i) => i.type === 'sauce'),
           ref={bunRef}
           ingredients={buns}
           title="Булочки"
-          onIngredientClick={setSelectedIngredient}
+          onIngredientClick={handleIngredientClick}
         />
         <IngredientsList
           ref={mainRef}
           ingredients={mains}
           title="Начинки"
-          onIngredientClick={setSelectedIngredient}
+          onIngredientClick={handleIngredientClick}
         />
         <IngredientsList
           ref={sauceRef}
           ingredients={sauces}
           title="Соусы"
-          onIngredientClick={setSelectedIngredient}
+          onIngredientClick={handleIngredientClick}
         />
       </div>
 
-      {selectedIngredient && (
-        <Modal
-          title="Детали ингредиента"
-          onClose={() => setSelectedIngredient(null)}
-        >
+      {isModalOpen && selectedIngredient && (
+        <Modal title="Детали ингредиента" onClose={handleCloseModal}>
           <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}

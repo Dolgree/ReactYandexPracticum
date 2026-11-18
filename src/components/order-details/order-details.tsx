@@ -2,11 +2,15 @@ import { CheckMarkIcon } from '@krgaa/react-developer-burger-ui-components';
 
 import styles from './order-details.module.css';
 
-const TEST_ORDER_NUMBER = '034536';
+type TOrderDetailsProps = {
+  orderNumber: number;
+};
 
-export const OrderDetails = (): React.JSX.Element => (
+export const OrderDetails = ({
+  orderNumber,
+}: TOrderDetailsProps): React.JSX.Element => (
   <div className={styles.details}>
-    <p className="text text_type_digits-large">{TEST_ORDER_NUMBER}</p>
+    <p className="text text_type_digits-large">{orderNumber}</p>
     <p className="text text_type_main-medium mt-8">идентификатор заказа</p>
 
     <div className={`${styles.icon_wrapper} mt-15`}>
