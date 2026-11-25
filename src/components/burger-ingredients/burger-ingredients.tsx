@@ -1,37 +1,24 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
 import { IngredientsList } from '@components/ingredient-list/ingredient-list';
-import { Modal } from '@components/modal/modal';
-import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
-import { useModal } from '@hooks/use-modal';
-import {
-  setSelectedIngredient,
-  clearSelectedIngredient,
-} from '@services/slices/ingredient-details-slice';
+import { useGetIngredientsQuery } from '@services/api';
 
 import type { TIngredient } from '@utils/types';
-import type { TRootState } from '@services/store';
 
 import styles from './burger-ingredients.module.css';
 
-type TBurgerIngredientsProps = {
-  ingredients: TIngredient[];
-};
-
 type TTabValue = 'bun' | 'main' | 'sauce';
 
-export const BurgerIngredients = ({
-  ingredients,
-}: TBurgerIngredientsProps): React.JSX.Element => {
-  const dispatch = useDispatch();
-  const selectedIngredient = useSelector(
-    (state: TRootState) => state.ingredientDetails.selectedIngredient
-  );
+export const BurgerIngredients = (): React.JSX.Element => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { data: ingredientsResponse, isLoading, isError } = useGetIngredientsQuery();
+  const ingredients = ingredientsResponse?.data ?? [];
 
   const [activeTab, setActiveTab] = useState<TTabValue>('bun');
-  const { isModalOpen, openModal, closeModal } = useModal();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const bunRef = useRef<HTMLDivElement>(null);
@@ -54,16 +41,12 @@ export const BurgerIngredients = ({
 
   const handleIngredientClick = useCallback(
     (ingredient: TIngredient) => {
-      dispatch(setSelectedIngredient(ingredient));
-      openModal();
+      navigate(`/ingredients/${ingredient._id}`, {
+        state: { backgroundLocation: location },
+      });
     },
-    [dispatch, openModal]
+    [navigate, location]
   );
-
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-    dispatch(clearSelectedIngredient());
-  }, [dispatch, closeModal]);
 
   const handleTabClick = useCallback(
     (value: TTabValue, ref: React.RefObject<HTMLDivElement | null>) => {
@@ -112,6 +95,13 @@ export const BurgerIngredients = ({
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (isLoading) {
+    return <p className="text text_type_main-default">Загрузка ингредиентов…</p>;
+  }
+  if (isError) {
+    return <p className="text text_type_main-default">Не удалось загрузить ингредиенты</p>;
+  }
 
   return (
     <section className={styles.burger_ingredients}>
@@ -164,12 +154,6 @@ export const BurgerIngredients = ({
           onIngredientClick={handleIngredientClick}
         />
       </div>
-
-      {isModalOpen && selectedIngredient && (
-        <Modal title="Детали ингредиента" onClose={handleCloseModal}>
-          <IngredientDetails ingredient={selectedIngredient} />
-        </Modal>
-      )}
     </section>
   );
 };
