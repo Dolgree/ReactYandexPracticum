@@ -14,7 +14,7 @@ export const LoginPage = (): React.JSX.Element => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg('');
     try {

@@ -13,14 +13,15 @@ export const RegisterPage = (): React.JSX.Element => {
 
   const [register, { isLoading }] = useRegisterMutation();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg('');
     try {
       await register({ name, email, password }).unwrap();
       navigate('/', { replace: true });
-    } catch (err: any) {
-      setErrorMsg(err?.data?.message || 'Ошибка регистрации');
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string } };
+      setErrorMsg(error?.data?.message || 'Ошибка регистрации');
     }
   };
 

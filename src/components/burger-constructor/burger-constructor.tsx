@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@hooks/use-redux';
 import { useDrop } from 'react-dnd';
 
 import {
@@ -22,7 +22,6 @@ import {
 import { FillingItem } from './filling-item';
 
 import type { TIngredient } from '@utils/types';
-import type { TRootState } from '@services/store';
 
 import styles from './burger-constructor.module.css';
 
@@ -31,11 +30,9 @@ type TDragItem = {
 };
 
 export const BurgerConstructor = (): React.JSX.Element => {
-  const dispatch = useDispatch();
-  const { bun, ingredients } = useSelector(
-    (state: TRootState) => state.burgerConstructor
-  );
-  const totalPrice = useSelector(selectTotalPrice);
+  const dispatch = useAppDispatch();
+  const { bun, ingredients } = useAppSelector((state) => state.burgerConstructor);
+  const totalPrice = useAppSelector(selectTotalPrice);
 
   const { isModalOpen, openModal, closeModal } = useModal();
   const [createOrder, { data: orderData }] = useCreateOrderMutation();

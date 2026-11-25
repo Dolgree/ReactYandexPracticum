@@ -41,7 +41,7 @@ export const ProfileInfoPage = (): React.JSX.Element => {
     setPassword('');
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await updateUser({ name, email, password }).unwrap();
