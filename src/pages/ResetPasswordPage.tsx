@@ -6,7 +6,7 @@ import { useForm } from '@hooks/use-form';
 import styles from './auth.module.css';
 
 export const ResetPasswordPage = (): React.JSX.Element | null => {
-  // 👇 Важно: name инпута "token", а не "code" — потому что API ждёт "token"
+  //Важно: name инпута "token", а не "code" — потому что API ждёт "token"
   const { values, handleChange } = useForm({ password: '', token: '' });
   const [errorMsg, setErrorMsg] = useState('');
   const [isChecking, setIsChecking] = useState(true);
