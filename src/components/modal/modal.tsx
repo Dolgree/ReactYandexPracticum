@@ -13,7 +13,7 @@ type TModalProps = {
   children: React.ReactNode;
 };
 
-const modalRoot = document.getElementById('modals') as HTMLElement;
+const modalRoot = document.getElementById('modals')!;
 
 export const Modal = ({
   title,
