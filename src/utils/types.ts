@@ -25,3 +25,32 @@ export type TOrderResponse = {
   };
   success: boolean;
 };
+
+// Типы для авторизации
+export type TUser = {
+  email: string;
+  name: string;
+};
+
+export type TAuthResponse = {
+  success: boolean;
+  user: TUser;
+  accessToken: string;
+  refreshToken: string;
+};
+
+export type TRefreshResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+};
+
+export type TLogoutResponse = {
+  success: boolean;
+  message: string;
+};
+
+export type TPasswordResetResponse = {
+  success: boolean;
+  message: string;
+};

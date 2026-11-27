@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 120px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  flex-shrink: 0; /* не сжимается, если контента много */
+  text-align: left;
+}
+
+.link {
+  text-decoration: none;
+  line-height: 64px;
+}
+
+.link_active {
+  color: #f2f2f3;
+}
+
+.button {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  line-height: 64px;
+}
+
+.button:hover {
+  color: #f2f2f3;
+}
+
+.content {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.placeholder {
+  margin-top: 60px;
+}
