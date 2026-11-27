@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   BurgerIcon,
   ListIcon,
@@ -9,34 +9,39 @@ import {
 import styles from './app-header.module.css';
 
 export const AppHeader = (): React.JSX.Element => {
-  const { pathname } = useLocation();
+  // Вспомогательная функция для формирования классов
+  const getLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `${styles.link} ${isActive ? styles.link_active : ''}`;
 
-  const isConstructorActive =
-    pathname === '/' || pathname.startsWith('/ingredients');
-  const isFeedActive = pathname.startsWith('/feed');
-  const isProfileActive = pathname.startsWith('/profile');
-
-  const textClass = (isActive: boolean) =>
+  // Вспомогательная функция для текста (активный — белый, неактивный — серый)
+  const getTextClass = (isActive: boolean) =>
     `text text_type_main-default ml-2 ${isActive ? '' : 'text_color_inactive'}`;
 
   return (
     <header className={styles.header}>
       <nav className={`${styles.menu} p-4`}>
         <div className={styles.menu_part_left}>
-          <NavLink
-            to="/"
-            className={`${styles.link} ${isConstructorActive ? styles.link_active : ''}`}
-          >
-            <BurgerIcon type={isConstructorActive ? 'primary' : 'secondary'} />
-            <p className={textClass(isConstructorActive)}>Конструктор</p>
+          {/* Конструктор: end означает, что ссылка активна только на "/" */}
+          <NavLink to="/" end className={getLinkClass}>
+            {({ isActive }) => (
+              <>
+                <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
+                <p className={getTextClass(isActive)}>Конструктор</p>
+              </>
+            )}
           </NavLink>
 
+          {/* Лента заказов: без end, поэтому активна и на вложенных маршрутах */}
           <NavLink
             to="/feed"
-            className={`${styles.link} ml-10 ${isFeedActive ? styles.link_active : ''}`}
+            className={({ isActive }) => `${getLinkClass({ isActive })} ml-10`}
           >
-            <ListIcon type={isFeedActive ? 'primary' : 'secondary'} />
-            <p className={textClass(isFeedActive)}>Лента заказов</p>
+            {({ isActive }) => (
+              <>
+                <ListIcon type={isActive ? 'primary' : 'secondary'} />
+                <p className={getTextClass(isActive)}>Лента заказов</p>
+              </>
+            )}
           </NavLink>
         </div>
 
@@ -46,14 +51,19 @@ export const AppHeader = (): React.JSX.Element => {
           </NavLink>
         </div>
 
+        {/* Личный кабинет: без end, активна и на /profile/orders */}
         <NavLink
           to="/profile"
-          className={`${styles.link} ${styles.link_position_last} ${
-            isProfileActive ? styles.link_active : ''
-          }`}
+          className={({ isActive }) =>
+            `${getLinkClass({ isActive })} ${styles.link_position_last}`
+          }
         >
-          <ProfileIcon type={isProfileActive ? 'primary' : 'secondary'} />
-          <p className={textClass(isProfileActive)}>Личный кабинет</p>
+          {({ isActive }) => (
+            <>
+              <ProfileIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className={getTextClass(isActive)}>Личный кабинет</p>
+            </>
+          )}
         </NavLink>
       </nav>
     </header>

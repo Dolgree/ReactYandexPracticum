@@ -1,10 +1,12 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAppSelector } from '@hooks/use-redux';
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
+import { useAppSelector } from '@hooks/use-redux';
+
+import styles from './protected-route.module.css';
 
 type TProtectedRouteProps = {
   onlyUnAuth?: boolean;
-  children: React.JSX.Element;
+  children: React.ReactNode;
 };
 
 export const ProtectedRoute = ({
@@ -17,24 +19,24 @@ export const ProtectedRoute = ({
   // 1. Пока идет проверка токенов при старте — показываем прелоадер
   if (!isAuthChecked) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
+      <div className={styles.loader}>
         <Preloader />
       </div>
     );
   }
 
-  // 2. Если маршрут ТОЛЬКО для неавторизованных (логин, регистрация), а юзер залогинен
-  // Возвращаем его туда, откуда он пришел (или на главную)
+  // 2. Если маршрут ТОЛЬКО для неавторизованных, а юзер залогинен
   if (onlyUnAuth && user) {
-    const from = location.state?.from?.pathname || '/';
+    const from =
+      (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || '/';
     return <Navigate to={from} replace />;
   }
 
-  // 3. Если маршрут ТОЛЬКО для авторизованных (профиль), а юзер не залогинен
-  // Кидаем на логин и запоминаем, куда он хотел попасть
+  // 3. Если маршрут ТОЛЬКО для авторизованных, а юзер не залогинен
   if (!onlyUnAuth && !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children;
+  // 4. Все проверки пройдены — рендерим компонент
+  return <>{children}</>;
 };

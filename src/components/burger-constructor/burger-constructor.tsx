@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@hooks/use-redux';
 import { useDrop } from 'react-dnd';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import {
   ConstructorElement,
@@ -10,6 +10,7 @@ import {
 import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { useModal } from '@hooks/use-modal';
+import { useAppDispatch, useAppSelector } from '@hooks/use-redux';
 import { useCreateOrderMutation } from '@services/api';
 import {
   addIngredient,
@@ -33,6 +34,10 @@ export const BurgerConstructor = (): React.JSX.Element => {
   const dispatch = useAppDispatch();
   const { bun, ingredients } = useAppSelector((state) => state.burgerConstructor);
   const totalPrice = useAppSelector(selectTotalPrice);
+  const user = useAppSelector((state) => state.user.user);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const { isModalOpen, openModal, closeModal } = useModal();
   const [createOrder, { data: orderData }] = useCreateOrderMutation();
@@ -71,14 +76,14 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
   const setBunDropRef = useCallback(
     (node: HTMLElement | null) => {
-      bunDropRef(node);
+      void bunDropRef(node);
     },
     [bunDropRef]
   );
 
   const setFillingDropRef = useCallback(
     (node: HTMLElement | null) => {
-      fillingDropRef(node);
+      void fillingDropRef(node);
     },
     [fillingDropRef]
   );
@@ -100,6 +105,12 @@ export const BurgerConstructor = (): React.JSX.Element => {
   const handleOpenOrder = useCallback(async () => {
     if (!bun) return;
 
+    // Если пользователь не авторизован — не отправляем заказ, а редиректим на логин
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
     const ids = [bun._id, ...ingredients.map((i) => i._id), bun._id];
 
     try {
@@ -109,11 +120,11 @@ export const BurgerConstructor = (): React.JSX.Element => {
     } catch (err) {
       console.error('Ошибка создания заказа:', err);
     }
-  }, [bun, ingredients, createOrder, openModal, dispatch]);
+  }, [bun, ingredients, user, navigate, location, createOrder, openModal, dispatch]);
 
   return (
     <section
-      ref={setBunDropRef}
+      ref={setBunDropRef} //используем обертку
       className={`${styles.burger_constructor} pt-25 pl-4`}
     >
       {/* Верхняя булка */}
@@ -141,7 +152,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
       {/* Начинки */}
       <div
-        ref={setFillingDropRef}
+        ref={setFillingDropRef} //используем обертку
         className={`custom-scroll ${styles.fillings_wrapper}`}
       >
         <ul className={styles.fillings}>
